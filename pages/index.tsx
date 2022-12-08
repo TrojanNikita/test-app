@@ -2,12 +2,11 @@ import {GetServerSidePropsContext} from "next";
 import {Button, Layout, Table, Tag, Typography} from "antd";
 import {ColumnsType} from "antd/lib/table";
 import {User} from "../types/user";
-import {users} from "../data/users";
-import {router} from "next/client";
 import {useRouter} from "next/router";
+import Head from "next/head";
+import styles from 'styles/Main.module.less'
 
 export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
-    console.log(req.cookies)
     if (!req.cookies?.['session_id']) {
         return {
             redirect: {
@@ -17,16 +16,20 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
         }
     }
 
+    const resp = await fetch('http:localhost:3000/api/users/list')
+    const users = await resp.json()
+
     return {
-        props: {}
+        props: { users }
     }
 }
 
-const headerStyle = { backgroundColor: 'white' }
+type Props = {
+    users: User[]
+}
 
-const contentStyle = { padding: '50px' }
-
-export default function Home() {
+export default function Main({ users }: Props) {
+    console.log(users)
     const router = useRouter()
 
     const columns: ColumnsType<User> = [
@@ -51,14 +54,18 @@ export default function Home() {
     ]
 
     const exit = async () => {
-        document.cookie = ['session_id=', `max-age=${-1}`, 'path=/'].join('; ')
-
-        await router.push('/login')
+        await Promise.all([
+            fetch('/api/users/exit'),
+            router.push('/login')
+        ])
     };
 
   return (
       <Layout>
-          <Layout.Header style={headerStyle}>
+          <Head>
+              <title>Test App</title>
+          </Head>
+          <Layout.Header className={styles.header}>
               <Typography.Text>
                   Test App
               </Typography.Text>
@@ -66,7 +73,7 @@ export default function Home() {
                   Выйти
               </Button>
           </Layout.Header>
-          <Layout.Content style={contentStyle}>
+          <Layout.Content className={styles.content}>
               <Table
                   rowKey="id"
                   columns={columns}

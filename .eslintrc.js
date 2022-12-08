@@ -24,6 +24,7 @@ module.exports = {
                     ['public', './public'],
                     ['constants', './constants'],
                     ['components', './components'],
+                    ['styles', './styles'],
                 ],
                 extensions: ['.ts', '.tsx'],
             },

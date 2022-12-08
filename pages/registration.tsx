@@ -1,11 +1,12 @@
-import {Button, Card, Form, Input, notification} from 'antd'
+import {Button, Card, Form, Input, InputNumber, notification} from 'antd'
+import users from "../data/users.json";
 import {User} from "../types/user";
 import {useRouter} from "next/router";
 import Head from "next/head";
 import styles from '../styles/Auth.module.less'
 import Link from "next/link";
 
-export default function Login() {
+export default function Registration() {
     const [form] = Form.useForm<Omit<User, 'id'>>()
     const router = useRouter()
     const [api, contextHolder] = notification.useNotification()
@@ -14,7 +15,11 @@ export default function Login() {
         .validateFields()
         .then(async (values) => {
             const resp = await fetch(
-                `/api/users/one?password=${values.password}&username=${values.username}`
+                `/api/users/create`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify(values)
+                }
             )
 
             if (resp.ok) {
@@ -30,10 +35,10 @@ export default function Login() {
     return (
         <div className={styles.page}>
             <Head>
-                <title>Test App | Вход</title>
+                <title>Test App | Регистрация</title>
             </Head>
             {contextHolder}
-            <Card title="Войти" className={styles.card}>
+            <Card title="Регистрация" className={styles.card}>
                 <Form
                     layout="horizontal"
                     size="large"
@@ -46,7 +51,7 @@ export default function Login() {
                             { required: true, message: 'Введите имя пользователя' }
                         ]}
                     >
-                        <Input placeholder="Username"/>
+                        <Input placeholder="Имя пользователя"/>
                     </Form.Item>
 
                     <Form.Item
@@ -55,15 +60,24 @@ export default function Login() {
                             { required: true, message: 'Введите пароль' }
                         ]}
                     >
-                        <Input placeholder="Password"/>
+                        <Input placeholder="Пароль"/>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="age"
+                        rules={[
+                            { required: true, message: 'Введите возраст' }
+                        ]}
+                    >
+                        <InputNumber placeholder="Возраст"/>
                     </Form.Item>
                     <Form.Item>
                         <div className={styles.actions}>
                             <Button type="primary" htmlType="submit" onSubmit={handleSubmit}>
-                                Войти
+                                Готово
                             </Button>
                             <Link href="/registration">
-                                Регистрация
+                                Войти
                             </Link>
                         </div>
                     </Form.Item>
