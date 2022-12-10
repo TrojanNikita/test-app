@@ -8,21 +8,23 @@ import Link from "next/link";
 export default function Login() {
     const [form] = Form.useForm<Omit<User, 'id'>>()
     const router = useRouter()
-    const [api, contextHolder] = notification.useNotification()
+    const [toast, contextHolder] = notification.useNotification()
 
     const handleSubmit = () => form
         .validateFields()
         .then(async (values) => {
-            const resp = await fetch(
-                `/api/users/one?password=${values.password}&username=${values.username}`
-            )
+            const query = Object.entries(values)
+                .map(([key, value]) => `${key}=${value}`)
+                .join('&')
+
+            const resp = await fetch(`/api/auth/sign_in?${query}`)
 
             if (resp.ok) {
                 await router.push('/')
             } else {
-                api.error({
+                toast.error({
                     message: `Пользователь ${values.username} не найден!`,
-                    description: 'Повторите попытку или зарегестрируйтесь'
+                    description: 'Повторите попытку или зарегистрируйтесь'
                 })
             }
         })
@@ -62,7 +64,7 @@ export default function Login() {
                             <Button type="primary" htmlType="submit" onSubmit={handleSubmit}>
                                 Войти
                             </Button>
-                            <Link href="/registration">
+                            <Link href="/sign_up">
                                 Регистрация
                             </Link>
                         </div>

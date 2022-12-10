@@ -25,7 +25,7 @@ export default async function handler(
                 {expires: new Date(Date.now() + 8 * 3600000), path: '/'}
             )
         )
-        res.status(201).json(currentUser)
+        res.status(200).json(currentUser)
     } else {
         res.status(404).json({ message: 'User not found' })
     }

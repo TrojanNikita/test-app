@@ -1,21 +1,20 @@
 import {Button, Card, Form, Input, InputNumber, notification} from 'antd'
-import users from "../data/users.json";
 import {User} from "../types/user";
 import {useRouter} from "next/router";
 import Head from "next/head";
 import styles from '../styles/Auth.module.less'
 import Link from "next/link";
 
-export default function Registration() {
+export default function SignUp() {
     const [form] = Form.useForm<Omit<User, 'id'>>()
     const router = useRouter()
-    const [api, contextHolder] = notification.useNotification()
+    const [toast, contextHolder] = notification.useNotification()
 
     const handleSubmit = () => form
         .validateFields()
         .then(async (values) => {
             const resp = await fetch(
-                `/api/users/create`,
+                `/api/auth/sign_up`,
                 {
                     method: 'POST',
                     body: JSON.stringify(values)
@@ -25,9 +24,9 @@ export default function Registration() {
             if (resp.ok) {
                 await router.push('/')
             } else {
-                api.error({
+                toast.error({
                     message: `Пользователь ${values.username} не найден!`,
-                    description: 'Повторите попытку или зарегестрируйтесь'
+                    description: 'Повторите попытку или зарегистрируйтесь'
                 })
             }
         })
@@ -76,7 +75,7 @@ export default function Registration() {
                             <Button type="primary" htmlType="submit" onSubmit={handleSubmit}>
                                 Готово
                             </Button>
-                            <Link href="/registration">
+                            <Link href="/sign_up">
                                 Войти
                             </Link>
                         </div>

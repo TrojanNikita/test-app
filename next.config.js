@@ -4,6 +4,7 @@
 const withLess = require('next-with-less');
 
 const nextConfig = withLess({
+  output: 'standalone',
   lessLoaderOptions: {
     lessOptions: {
       javascriptEnabled: true

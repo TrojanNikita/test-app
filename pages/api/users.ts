@@ -1,7 +1,7 @@
 import path from 'path';
 import {promises as fs} from 'fs';
 import {NextApiRequest, NextApiResponse} from "next";
-import {User} from "../../../types/user";
+import {User} from "../../types/user";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const jsonDirectory = path.join(process.cwd(), 'data')

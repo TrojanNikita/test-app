@@ -6,30 +6,11 @@ import {useRouter} from "next/router";
 import Head from "next/head";
 import styles from 'styles/Main.module.less'
 
-export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
-    if (!req.cookies?.['session_id']) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false
-            }
-        }
-    }
-
-    const resp = await fetch('http:localhost:3000/api/users/list')
-    const users = await resp.json()
-
-    return {
-        props: { users }
-    }
-}
-
 type Props = {
     users: User[]
 }
 
 export default function Main({ users }: Props) {
-    console.log(users)
     const router = useRouter()
 
     const columns: ColumnsType<User> = [
@@ -55,7 +36,7 @@ export default function Main({ users }: Props) {
 
     const exit = async () => {
         await Promise.all([
-            fetch('/api/users/exit'),
+            fetch('/api/auth/exit'),
             router.push('/login')
         ])
     };
@@ -83,4 +64,22 @@ export default function Main({ users }: Props) {
           </Layout.Content>
       </Layout>
   )
+}
+
+export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
+    if (!req.cookies?.['session_id']) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false
+            }
+        }
+    }
+
+    const resp = await fetch('http:localhost:3000/api/users')
+    const users = await resp.json()
+
+    return {
+        props: { users }
+    }
 }

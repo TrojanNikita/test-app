@@ -10,6 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         )
 
         res.setHeader('Set-Cookie', cookie)
+        res.status(200).json('User logged out successfully')
     } catch (e) {
         res.status(500).json(`Internal server error ${e}`)
     }
